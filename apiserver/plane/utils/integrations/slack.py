@@ -16,6 +16,6 @@ def slack_oauth(code):
                 "client_id": SLACK_CLIENT_ID,
                 "client_secret": SLACK_CLIENT_SECRET,
             },
-        )
+        timeout=60)
         return response.json()
     return {}

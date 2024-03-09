@@ -98,7 +98,7 @@ def get_access_token(request_token: str, client_id: str) -> str:
     url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={CLIENT_SECRET}&code={request_token}"
     headers = {"accept": "application/json"}
 
-    res = requests.post(url, headers=headers)
+    res = requests.post(url, headers=headers, timeout=60)
 
     data = res.json()
     access_token = data["access_token"]
@@ -120,13 +120,13 @@ def get_user_data(access_token: str) -> dict:
     url = "https://api.github.com/user"
     headers = {"Authorization": access_token}
 
-    resp = requests.get(url=url, headers=headers)
+    resp = requests.get(url=url, headers=headers, timeout=60)
 
     user_data = resp.json()
 
     response = requests.get(
-        url="https://api.github.com/user/emails", headers=headers
-    ).json()
+        url="https://api.github.com/user/emails", headers=headers, 
+    timeout=60).json()
 
     _ = [
         user_data.update({"email": item.get("email")})

@@ -1621,7 +1621,7 @@ def issue_activity(
                             f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
                             json=issue_activity_json,
                             headers=headers,
-                        )
+                        timeout=60)
             except Exception as e:
                 capture_exception(e)
 

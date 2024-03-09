@@ -187,7 +187,7 @@ def service_importer(service, importer_id):
                 f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
                 json=import_data_json,
                 headers=headers,
-            )
+            timeout=60)
 
         return
     except Exception as e:

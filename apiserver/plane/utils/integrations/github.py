@@ -37,7 +37,7 @@ def get_github_metadata(installation_id):
         "Authorization": "Bearer " + str(token),
         "Accept": "application/vnd.github+json",
     }
-    response = requests.get(url, headers=headers).json()
+    response = requests.get(url, headers=headers, timeout=60).json()
     return response
 
 
@@ -52,7 +52,7 @@ def get_github_repos(access_tokens_url, repositories_url):
     oauth_response = requests.post(
         access_tokens_url,
         headers=headers,
-    ).json()
+    timeout=60).json()
 
     oauth_token = oauth_response.get("token", "")
     headers = {
@@ -62,7 +62,7 @@ def get_github_repos(access_tokens_url, repositories_url):
     response = requests.get(
         repositories_url,
         headers=headers,
-    ).json()
+    timeout=60).json()
     return response
 
 
@@ -74,7 +74,7 @@ def delete_github_installation(installation_id):
         "Authorization": "Bearer " + str(token),
         "Accept": "application/vnd.github+json",
     }
-    response = requests.delete(url, headers=headers)
+    response = requests.delete(url, headers=headers, timeout=60)
     return response
 
 
@@ -90,7 +90,7 @@ def get_github_repo_details(access_tokens_url, owner, repo):
     oauth_response = requests.post(
         access_tokens_url,
         headers=headers,
-    ).json()
+    timeout=60).json()
 
     oauth_token = oauth_response.get("token")
     headers = {
@@ -100,14 +100,14 @@ def get_github_repo_details(access_tokens_url, owner, repo):
     open_issues = requests.get(
         f"https://api.github.com/repos/{owner}/{repo}",
         headers=headers,
-    ).json()["open_issues_count"]
+    timeout=60).json()["open_issues_count"]
 
     total_labels = 0
 
     labels_response = requests.get(
         f"https://api.github.com/repos/{owner}/{repo}/labels?per_page=100&page=1",
         headers=headers,
-    )
+    timeout=60)
 
     # Check if there are more pages
     if len(labels_response.links.keys()):
@@ -118,7 +118,7 @@ def get_github_repo_details(access_tokens_url, owner, repo):
         total_labels = total_labels + 100 * (int(last_page_value) - 1)
 
         # Get labels in last page
-        last_page_labels = requests.get(last_url, headers=headers).json()
+        last_page_labels = requests.get(last_url, headers=headers, timeout=60).json()
         total_labels = total_labels + len(last_page_labels)
     else:
         total_labels = len(labels_response.json())
@@ -128,7 +128,7 @@ def get_github_repo_details(access_tokens_url, owner, repo):
     collaborators = requests.get(
         f"https://api.github.com/repos/{owner}/{repo}/collaborators?per_page=100&page=1",
         headers=headers,
-    ).json()
+    timeout=60).json()
 
     return open_issues, total_labels, collaborators
 
@@ -146,7 +146,7 @@ def get_release_notes():
             "Accept": "application/vnd.github.v3+json",
         }
     url = "https://api.github.com/repos/makeplane/plane/releases?per_page=5&page=1"
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=60)
 
     if response.status_code != 200:
         return {"error": "Unable to render information from Github Repository"}
